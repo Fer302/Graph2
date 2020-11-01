@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Automatas</title>
+    <link href="styles/format.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Jolly+Lodger&display=swap" rel="stylesheet"> 
+  </head>
+  <body>
+    <label for="Automata">Automata: </label>
+    <select name= "Automata" id="Automata">
+      <option value="1">1</option>
+      <option value="2">2</option>
+    </select>
+    <label for="final">Hacer final</label>
+    <input type="checkbox" id="final">
+    <button onclick="createnode()">Nuevo estado</button>
+    <button onclick="help()">?</button>
+    <form>
+      <label for="num">Condicion:</label><br>
+      <input type="text" name="num" id="num"><br>
+    </form>
+    <button onclick="update();"> Actualizar condicion </button>
+    <h3 id="w">Condicion seleccionada = @</h3>
+    <input type="checkbox" id="add" onclick="check()">
+    <label for="add">Añadir funciones</label>
+    <h3>Funciones:</h3>
+    <p id="owtheedge1"></p>
+    <p id="owtheedge2"></p>
+    <p id="owtheedgeF"></p>
+    <script src="scripts/main.js"></script>
+  </body>
+</html> 
