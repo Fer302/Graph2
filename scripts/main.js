@@ -46,13 +46,6 @@ var nodespassed = []
 var matrix = new Array(0).fill(0).map(() => new Array(0).fill(0));
 var Column = []
 
-function check(){
-    if(!document.getElementById("add").checked){
-        var nodes = document.getElementsByClassName("selected");
-        nodes[0].classList.remove("selected");
-    }
-}
-
 function update(){
     Condition = document.getElementById("num").value;
     if(Condition.length == 0){
@@ -62,6 +55,13 @@ function update(){
         Condition *= -1;
     }
     document.getElementById("w").innerHTML = "Condicion seleccionada = " +Condition;
+}
+
+function isadd(){
+    if(!document.getElementById("add").checked){
+        var nodes = document.getElementsByClassName("selected");
+        nodes[0].classList.remove("selected");
+    }
 }
 
 function showedges(aux){
@@ -117,6 +117,49 @@ function createnode(){
         document.body.appendChild(btn);
         pathmatrix();
     }
+}
+
+function check(array, auto){
+    var i, size;
+    if(auto == 1){
+        size = edgearray1.length;
+    }
+    else if(auto == 2){
+        size = edgearray2.length;
+    }
+    if(array.length == 1){
+        var nodes = document.getElementById(array[0].id);
+        array = [array[0].id, array[0].id];
+    }
+    else if(array.length == 2){
+        var node1 = document.getElementById(first.id);
+        var node2 = document.getElementById(array[0].id);
+        if(node1 == node2)
+            node2 = document.getElementById(array[1].id);
+        array = [node1.id, node2.id];
+    }
+    for(i = 0; i < size; i++){
+        if(auto == 1)
+            if(edgearray1[i].nodes[0] == array[0] && edgearray1[i].nodes[1] == array[1]){
+                edgearray1[i].Condition = Condition;
+                showedges(auto);
+                if(nodes != null){
+                    document.getElementById(nodes.id).classlist.remove("selected2");
+                }
+                else if(node1 != null){
+                    document.getElementById(node1.id).classList.remove("selected");
+                    document.getElementById(node2.id).classList.remove("selected");
+                }
+                return true;
+            }
+        else if(auto == 2)
+            if(edgearray1[i].nodes[0] == array[0] && edgearray1[i].nodes[1] == array[1]){
+                edgearray2[i].Condition = Condition;
+                showedges(auto);
+                return true;
+        }
+    }
+    return false;
 }
 
 (function (document) {
@@ -197,10 +240,12 @@ function createnode(){
                 target.classList.add("selected");
             if(document.getElementsByClassName("selected").length == 2){
                 if(document.getElementsByClassName("selected")[0].classList.contains("auto1") && document.getElementsByClassName("selected")[1].classList.contains("auto1")){
-                    addedge(1);
+                    if(!check(document.getElementsByClassName("selected"), 1))
+                        addedge(1);
                 }
                 else if(document.getElementsByClassName("selected")[0].classList.contains("auto2") && document.getElementsByClassName("selected")[1].classList.contains("auto2")){
-                    addedge(2);
+                    if(!check(document.getElementsByClassName("selected"), 2))
+                        addedge(2);
                 }
                 else{
                     document.getElementsByClassName("selected")[0].classList.remove("selected");
@@ -208,10 +253,15 @@ function createnode(){
                 }
             }
             else if(document.getElementsByClassName("selected2").length == 1){
-                if(target.classList.contains('auto1'))
-                    addedgeself(1);
-                else if(target.classList.contains('auto2'))
-                    addedgeself(2);
+                if(target.classList.contains('auto1')){
+                    if(!check(document.getElementsByClassName("selected2"), 1)){
+                    }
+                        addedgeself(1);
+                }
+                else if(target.classList.contains('auto2')){
+                    if(!check(document.getElementsByClassName("selected2"), 2))
+                        addedgeself(2);
+                }
             }
             else
                 first = document.getElementsByClassName("selected")[0];
