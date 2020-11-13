@@ -75,6 +75,10 @@ function showedges(aux){
         var use = edgearray1;
     else if(aux == 2)
         var use = edgearray2;
+    else if(aux == 3){
+        document.getElementById("owtheedge" + aux).innerHTML = "Automata resultante";
+        var use = edgearrayF;
+    }
     var cap = use.length;
     for(i=0; i<cap; i++){
         document.getElementById("owtheedge" + aux).innerHTML +=
@@ -90,7 +94,7 @@ function createnode(final){
         btn.innerHTML = count; 
         btn.id = -count;
         btn.classList.add("node");
-        btn.classlist.add("finalauto");
+        btn.classList.add("finalauto");
         if(count == 0){
             btn.classList.add("initialstate");
         }
@@ -205,8 +209,10 @@ function check(array, auto){
     }
     
     function addedge(aux, nod1, nod2, con){
+        alert("2");
         if(aux == 3){
-            edgearrayF.push(new edge(nod1.id, nod2.id, con));
+            alert("2");
+            edgearrayF.push(new edge(nod1.id*-1, nod2.id*-1, con));
             showedges(aux);
             FAuto[nod1.id].edges.push(edgearrayF[countfunctionsF-1]);
             FAuto[nod2.id].edges.push(edgearrayF[countfunctionsF-1]);
@@ -220,10 +226,10 @@ function check(array, auto){
             document.getElementsByClassName("selected")[0].classList.remove("selected");
             document.getElementsByClassName("selected")[0].classList.remove("selected");
             if(aux == 1){
-                edgearray1.push(new edge(node1.id, node2.id, Condition));
+                edgearray1.push(new edge(node1.id/2, node2.id/2, Condition));
             }
             if(aux == 2){
-                edgearray2.push(new edge(node1.id, node2.id, Condition));
+                edgearray2.push(new edge((node1.id-1)/2, (node2.id-1)/2, Condition));
             }
             showedges(aux);
             if(aux == 1){
@@ -266,7 +272,7 @@ function check(array, auto){
                 target.classList.remove("selected");
                 target.classList.add("selected2");
             }
-            else
+            else if(!target.classList.contains("finalauto"))
                 target.classList.add("selected");
             if(document.getElementsByClassName("selected").length == 2){
                 if(document.getElementsByClassName("selected")[0].classList.contains("auto1") && document.getElementsByClassName("selected")[1].classList.contains("auto1")){
@@ -374,7 +380,7 @@ function connect(){
     }
 }
 
-/*function merge(){
+function merge(){
     var i, j, bool, aux = document.getElementsByClassName("finalauto");
     for(i = 0; i < aux.length; i++){
         aux[0].remove();
@@ -388,16 +394,31 @@ function connect(){
     countstatesF = 0;
     createnode(false);
     for(i = 1; i < Auto1.length + 1; i++){
-        bool = getElementById(2*(i-1)).classList.contains("finalstate");
+        bool = document.getElementById((i-1)*2).classList.contains("finalstate");
         createnode(bool);
         if(i == 1){
             addedge(3, FAuto[0], FAuto[1], "@")
+            alert(i);
         }
     }
     for(i = 1; i < FAuto.length; i++){
-        for(j= 0; )
+        for(j= 0; j < Auto1[i-1].edges.length; j++){
+            addedge(3, Auto1[i-1].edges[j].nodes[0] +1, Auto1[i-1].edges[j].nodes[1] +1, Auto1[i-1].edges[j].Condition);
+        }
     }
-}*/
+    for(i = 1 + Auto1.length; i < Auto1.length + 1 + Auto2.length; i++){
+        bool = getElementById(2*(i-1-Auto1.length)+1).classList.contains("finalstate");
+        createnode(bool);
+        if(i == 1 + Auto1.length){
+            addedge(3, FAuto[0], FAuto[i], "@")
+        }
+    }
+    for(i = 1 + Auto1.length; i < FAuto.length; i++){
+        for(j= 0; j < Auto2[i-1-Auto1.length].edges.length; j++){
+            addedge(3, Auto2[i-1-Auto1.length].edges[j].nodes[0] +1+Auto1.length, Auto2[i-1-Auto1.length].edges[j].nodes[1] +1+Auto1.length, Auto2[i-1-Auto1.length].edges[j].Condition);
+        }
+    }
+}
 // fauto = [0][auto1][auto2] -> id de fauto = (id de auto1) +1 || (id de auto2) +1 +auto1.length
 function help(){
     alert("PARA AGREGAR ESTADOS:");
