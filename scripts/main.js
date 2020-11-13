@@ -16,6 +16,10 @@ class node{
             this.id = countstates2;
             countstates2++;
         }
+        if(aux == 3){
+            this.id = countstatesF;
+            countstatesF++;
+        }
         this.edges= []; //Edges
     }
 }
@@ -78,20 +82,38 @@ function showedges(aux){
     }
 }
 
-function createnode(){
-    if(!document.getElementById("add").checked){
+function createnode(final){
+    if(final != null){
+        count = countstatesF;
+        FAuto.push(new node(3));
+        var btn = document.createElement("BUTTON"); 
+        btn.innerHTML = count; 
+        btn.id = -count;
+        btn.classList.add("node");
+        btn.classlist.add("finalauto");
+        if(count == 0){
+            btn.classList.add("initialstate");
+        }
+        if(final){
+            btn.classList.add("finalstate");
+        }
+        document.body.appendChild(btn);
+    }
+    else if(!document.getElementById("add").checked){
         aux = document.getElementById("Automata").value;
+        var btn = document.createElement("BUTTON"); 
         if(aux == 1){
             count=countstates1;
             Auto1.push(new node(aux));
+            btn.innerHTML = count; 
+            btn.id = 2*count;
         }
         if(aux == 2){
             count = countstates2;
             Auto2.push(new node(aux));
+            btn.innerHTML = count; 
+            btn.id = (2*count)+1;
         }
-        var btn = document.createElement("BUTTON"); 
-        btn.innerHTML = count; 
-        btn.id = count;
         btn.classList.add("node");
         if(aux == 1){
             btn.classList.add("auto1");
@@ -182,30 +204,38 @@ function check(array, auto){
         document.addEventListener('mousemove', moveAlong);
     }
     
-    function addedge(aux){
-        var nodes = document.getElementsByClassName("selected");
-        var node1 = document.getElementById(first.id);
-        var node2 = document.getElementById(nodes[0].id);
-        if(node1 == node2)
-            node2 = document.getElementById(nodes[1].id)
-        document.getElementsByClassName("selected")[0].classList.remove("selected");
-        document.getElementsByClassName("selected")[0].classList.remove("selected");
-        if(aux == 1){
-            edgearray1.push(new edge(node1.id, node2.id, Condition));
+    function addedge(aux, nod1, nod2, con){
+        if(aux == 3){
+            edgearrayF.push(new edge(nod1.id, nod2.id, con));
+            showedges(aux);
+            FAuto[nod1.id].edges.push(edgearrayF[countfunctionsF-1]);
+            FAuto[nod2.id].edges.push(edgearrayF[countfunctionsF-1]);
         }
-        if(aux == 2){
-            edgearray2.push(new edge(node1.id, node2.id, Condition));
+        else{
+            var nodes = document.getElementsByClassName("selected");
+            var node1 = document.getElementById(first.id);
+            var node2 = document.getElementById(nodes[0].id);
+            if(node1 == node2)
+                node2 = document.getElementById(nodes[1].id)
+            document.getElementsByClassName("selected")[0].classList.remove("selected");
+            document.getElementsByClassName("selected")[0].classList.remove("selected");
+            if(aux == 1){
+                edgearray1.push(new edge(node1.id, node2.id, Condition));
+            }
+            if(aux == 2){
+                edgearray2.push(new edge(node1.id, node2.id, Condition));
+            }
+            showedges(aux);
+            if(aux == 1){
+                Auto1[node1.id].edges.push(edgearray1[countfunctions1-1]);
+                Auto1[node2.id].edges.push(edgearray1[countfunctions1-1]);
+            }
+            if(aux == 2){
+                Auto2[node1.id].edges.push(edgearray2[countfunctions2-1]);
+                Auto2[node2.id].edges.push(edgearray2[countfunctions2-1]);
+            }
+            pathmatrix();
         }
-        showedges(aux);
-        if(aux == 1){
-            Auto1[node1.id].edges.push(edgearray1[countfunctions1-1]);
-            Auto1[node2.id].edges.push(edgearray1[countfunctions1-1]);
-        }
-        if(aux == 2){
-            Auto2[node1.id].edges.push(edgearray2[countfunctions2-1]);
-            Auto2[node2.id].edges.push(edgearray2[countfunctions2-1]);
-        }
-        pathmatrix();
     }
 
     function addedgeself(aux){
@@ -344,6 +374,31 @@ function connect(){
     }
 }
 
+/*function merge(){
+    var i, j, bool, aux = document.getElementsByClassName("finalauto");
+    for(i = 0; i < aux.length; i++){
+        aux[0].remove();
+    }
+    for(i = 0; i < FAuto.length; i++){
+        FAuto.pop();
+    }
+    for(i = 0; i < edgearrayF.length; i++){
+        edgearrayF.pop();
+    }
+    countstatesF = 0;
+    createnode(false);
+    for(i = 1; i < Auto1.length + 1; i++){
+        bool = getElementById(2*(i-1)).classList.contains("finalstate");
+        createnode(bool);
+        if(i == 1){
+            addedge(3, FAuto[0], FAuto[1], "@")
+        }
+    }
+    for(i = 1; i < FAuto.length; i++){
+        for(j= 0; )
+    }
+}*/
+// fauto = [0][auto1][auto2] -> id de fauto = (id de auto1) +1 || (id de auto2) +1 +auto1.length
 function help(){
     alert("PARA AGREGAR ESTADOS:");
     alert("Clickear en el boton 'Nuevo estado'");
