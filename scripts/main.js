@@ -92,7 +92,7 @@ function createnode(final){
         FAuto.push(new node(3));
         var btn = document.createElement("BUTTON"); 
         btn.innerHTML = count; 
-        btn.id = -count;
+        btn.id = count*-1;
         btn.classList.add("node");
         btn.classList.add("finalauto");
         if(count == 0){
@@ -208,56 +208,46 @@ function check(array, auto){
         document.addEventListener('mousemove', moveAlong);
     }
     
-    function addedge(aux, nod1, nod2, con){
-        alert("2");
-        if(aux == 3){
-            alert("2");
-            edgearrayF.push(new edge(nod1.id*-1, nod2.id*-1, con));
-            showedges(aux);
-            FAuto[nod1.id].edges.push(edgearrayF[countfunctionsF-1]);
-            FAuto[nod2.id].edges.push(edgearrayF[countfunctionsF-1]);
+    function addedge(aux){
+        var nodes = document.getElementsByClassName("selected");
+        var node1 = document.getElementById(first.id);
+        var node2 = document.getElementById(nodes[0].id);
+        if(node1 == node2)
+            node2 = document.getElementById(nodes[1].id)
+        document.getElementsByClassName("selected")[0].classList.remove("selected");
+        document.getElementsByClassName("selected")[0].classList.remove("selected");
+        if(aux == 1){
+            edgearray1.push(new edge(node1.id/2, node2.id/2, Condition));
         }
-        else{
-            var nodes = document.getElementsByClassName("selected");
-            var node1 = document.getElementById(first.id);
-            var node2 = document.getElementById(nodes[0].id);
-            if(node1 == node2)
-                node2 = document.getElementById(nodes[1].id)
-            document.getElementsByClassName("selected")[0].classList.remove("selected");
-            document.getElementsByClassName("selected")[0].classList.remove("selected");
-            if(aux == 1){
-                edgearray1.push(new edge(node1.id/2, node2.id/2, Condition));
-            }
-            if(aux == 2){
-                edgearray2.push(new edge((node1.id-1)/2, (node2.id-1)/2, Condition));
-            }
-            showedges(aux);
-            if(aux == 1){
-                Auto1[node1.id].edges.push(edgearray1[countfunctions1-1]);
-                Auto1[node2.id].edges.push(edgearray1[countfunctions1-1]);
-            }
-            if(aux == 2){
-                Auto2[node1.id].edges.push(edgearray2[countfunctions2-1]);
-                Auto2[node2.id].edges.push(edgearray2[countfunctions2-1]);
-            }
-            pathmatrix();
+        if(aux == 2){
+            edgearray2.push(new edge((node1.id-1)/2, (node2.id-1)/2, Condition));
         }
+        if(aux == 1){
+            Auto1[node1.id/2].edges.push(edgearray1[countfunctions1-1]);
+            Auto1[node2.id/2].edges.push(edgearray1[countfunctions1-1]);
+        }
+        if(aux == 2){
+            Auto2[(node1.id-1)/2].edges.push(edgearray2[countfunctions2-1]);
+            Auto2[(node2.id-1)/2].edges.push(edgearray2[countfunctions2-1]);
+        }
+        showedges(aux);
+        pathmatrix();
     }
 
     function addedgeself(aux){
         var nodes = document.getElementsByClassName("selected2")[0];
         if(aux == 1){
-            edgearray1.push(new edge(nodes.id, nodes.id, Condition));
+            edgearray1.push(new edge(nodes.id/2, nodes.id/2, Condition));
         }
         if(aux == 2){
-            edgearray2.push(new edge(nodes.id, nodes.id, Condition));
+            edgearray2.push(new edge((nodes.id-1)/2, (nodes.id-1)/2, Condition));
         }
         showedges(aux);
         if(aux == 1){
-            Auto1[nodes.id].edges.push(edgearray1[countfunctions1-1]);
+            Auto1[nodes.id/2].edges.push(edgearray1[countfunctions1-1]);
         }
         if(aux == 2){
-            Auto2[nodes.id].edges.push(edgearray2[countfunctions2-1]);
+            Auto2[(nodes.id-1)/2].edges.push(edgearray2[countfunctions2-1]);
         }
         nodes.classList.remove("selected2");
     }
@@ -291,8 +281,8 @@ function check(array, auto){
             else if(document.getElementsByClassName("selected2").length == 1){
                 if(target.classList.contains('auto1')){
                     if(!check(document.getElementsByClassName("selected2"), 1)){
-                    }
                         addedgeself(1);
+                    }
                 }
                 else if(target.classList.contains('auto2')){
                     if(!check(document.getElementsByClassName("selected2"), 2))
@@ -380,46 +370,72 @@ function connect(){
     }
 }
 
+function emptyauto(auto){
+    if(auto == 1){
+        var aux = document.getElementsByClassName("auto1");
+        while(aux[0]){
+            aux[0].parentNode.removeChild(aux[0]);
+        }
+        Auto1.splice(0, Auto1.length)
+        edgearray1.splice(0, edgearray1.length);
+        countstates1 = 0;
+    }
+    else if(auto == 2){
+        var aux = document.getElementsByClassName("auto2"); 
+        while(aux[0]){
+            aux[0].parentNode.removeChild(aux[0]);
+        }
+        Auto2.splice(0, Auto2.length)
+        edgearray2.splice(0, edgearray2.length);
+        countstates2 = 0;
+    }
+    else if(auto == 3){
+        var aux = document.getElementsByClassName("finalauto");
+        while(aux[0]){
+            aux[0].parentNode.removeChild(aux[0]);
+        }
+        FAuto.splice(0, FAuto.length)
+        edgearrayF.splice(0, edgearrayF.length);
+        countstatesF = 0;
+    }
+    showedges(auto);
+}
+
+function addedgefinal(nod1, nod2, con){
+    edgearrayF.push(new edge(nod1.id, nod2.id, con));
+    showedges(3);
+    FAuto[nod1.id].edges.push(edgearrayF[countfunctionsF-1]);
+    FAuto[nod2.id].edges.push(edgearrayF[countfunctionsF-1]);
+}
+
 function merge(){
-    var i, j, bool, aux = document.getElementsByClassName("finalauto");
-    for(i = 0; i < aux.length; i++){
-        aux[0].remove();
-    }
-    for(i = 0; i < FAuto.length; i++){
-        FAuto.pop();
-    }
-    for(i = 0; i < edgearrayF.length; i++){
-        edgearrayF.pop();
-    }
-    countstatesF = 0;
+    var i, bool, aux;
+    emptyauto(3);
     createnode(false);
     for(i = 1; i < Auto1.length + 1; i++){
         bool = document.getElementById((i-1)*2).classList.contains("finalstate");
         createnode(bool);
         if(i == 1){
-            addedge(3, FAuto[0], FAuto[1], "@")
-            alert(i);
+            addedgefinal(FAuto[0], FAuto[1], "@")
         }
     }
-    for(i = 1; i < FAuto.length; i++){
-        for(j= 0; j < Auto1[i-1].edges.length; j++){
-            addedge(3, Auto1[i-1].edges[j].nodes[0] +1, Auto1[i-1].edges[j].nodes[1] +1, Auto1[i-1].edges[j].Condition);
-        }
+    for(i = 0; i < edgearray1.length; i++){
+        aux = edgearray1[i];
+        addedgefinal(FAuto[aux.nodes[0] + 1], FAuto[aux.nodes[1] + 1], aux.Condition);
     }
     for(i = 1 + Auto1.length; i < Auto1.length + 1 + Auto2.length; i++){
-        bool = getElementById(2*(i-1-Auto1.length)+1).classList.contains("finalstate");
+        bool = document.getElementById(2*(i-1-Auto1.length)+1).classList.contains("finalstate");
         createnode(bool);
         if(i == 1 + Auto1.length){
-            addedge(3, FAuto[0], FAuto[i], "@")
+            addedgefinal(FAuto[0], FAuto[i], "@")
         }
     }
-    for(i = 1 + Auto1.length; i < FAuto.length; i++){
-        for(j= 0; j < Auto2[i-1-Auto1.length].edges.length; j++){
-            addedge(3, Auto2[i-1-Auto1.length].edges[j].nodes[0] +1+Auto1.length, Auto2[i-1-Auto1.length].edges[j].nodes[1] +1+Auto1.length, Auto2[i-1-Auto1.length].edges[j].Condition);
-        }
+    for(i = 0; i < edgearray2.length; i++){
+        aux = edgearray2[i];
+        addedgefinal(FAuto[aux.nodes[0] + 1 + Auto1.length], FAuto[aux.nodes[1] + 1 + Auto1.length], aux.Condition);
     }
 }
-// fauto = [0][auto1][auto2] -> id de fauto = (id de auto1) +1 || (id de auto2) +1 +auto1.length
+
 function help(){
     alert("PARA AGREGAR ESTADOS:");
     alert("Clickear en el boton 'Nuevo estado'");
