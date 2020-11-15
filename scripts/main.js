@@ -1,10 +1,13 @@
 var countstates1 = 0
 var countstates2 = 0
 var countstatesF = 0
+var countstatescopy = 0
 var countfunctions1 = 0
 var countfunctions2 = 0
 var countfunctionsF = 0
+var countfunctionscopy = 0
 var Condition = "@"
+var language = ["@"]
 
 class node{
     constructor(aux){
@@ -42,23 +45,41 @@ class edge{
 var Auto1 = []
 var Auto2 = []
 var FAuto = []
+var copyauto = []
+var finalstatescopy = []
 var edgearray1 = []
 var edgearray2 = []
 var edgearrayF = []
+var edgearraycopy = []
+var creatednodes = [] 
 var first // Node
 var nodespassed = [] 
 var matrix = new Array(0).fill(0).map(() => new Array(0).fill(0));
 var Column = []
 
+function updatelanguage(string){
+    var char;
+    while(string.length != 0){
+        char = string[0];
+        string = string.substring(1);
+        if(!pressent(language, char)){
+            language.push(char);
+        }
+    }
+    document.getElementById("L").innerHTML = "Lenguaje =";
+    for(i=0; i<language.length; i++){
+        document.getElementById("L").innerHTML +=
+            "  [" + language[i] + "] ";
+    }
+}
+
 function update(){
     Condition = document.getElementById("num").value;
     if(Condition.length == 0){
-        Condition = 0;
-    }
-    if(Condition<0){
-        Condition *= -1;
+        Condition = "@";
     }
     document.getElementById("w").innerHTML = "Condicion seleccionada = " +Condition;
+    updatelanguage(Condition);
 }
 
 function isadd(){
@@ -86,8 +107,40 @@ function showedges(aux){
     }
 }
 
-function createnode(final){
-    if(final != null){
+function createnode(final, auto){
+    if(auto == 1){
+        count = countstates1;
+        Auto1.push(new node(1));
+        var btn = document.createElement("BUTTON"); 
+        btn.innerHTML = count; 
+        btn.id = count * 2;
+        btn.classList.add("node");
+        btn.classList.add("auto1");
+        if(count == 0){
+            btn.classList.add("initialstate");
+        }
+        if(final){
+            btn.classList.add("finalstate");
+        }   
+        document.body.appendChild(btn);
+    }
+    else if(auto == 2){
+        count = countstates2;
+        Auto2.push(new node(2));
+        var btn = document.createElement("BUTTON"); 
+        btn.innerHTML = count; 
+        btn.id = 2 * count + 1;
+        btn.classList.add("node");
+        btn.classList.add("auto2");
+        if(count == 0){
+            btn.classList.add("initialstate");
+        }
+        if(final){
+            btn.classList.add("finalstate");
+        }
+        document.body.appendChild(btn);
+    }
+    else if(final != null){
         count = countstatesF;
         FAuto.push(new node(3));
         var btn = document.createElement("BUTTON"); 
@@ -401,11 +454,27 @@ function emptyauto(auto){
     showedges(auto);
 }
 
-function addedgefinal(nod1, nod2, con){
-    edgearrayF.push(new edge(nod1.id, nod2.id, con));
-    showedges(3);
-    FAuto[nod1.id].edges.push(edgearrayF[countfunctionsF-1]);
-    FAuto[nod2.id].edges.push(edgearrayF[countfunctionsF-1]);
+function addedgefinal(nod1, nod2, con, auto){
+    if(auto != null){
+        if(auto == 1){
+            edgearray1.push(new edge(nod1.id, nod2.id, con));
+            showedges(1);
+            Auto1[nod1.id].edges.push(edgearray1[countfunctions1-1]);
+            Auto1[nod2.id].edges.push(edgearray1[countfunctions1-1]);
+        }
+        else if(auto == 2){
+            edgearray2.push(new edge(nod1.id, nod2.id, con));
+            showedges(2);
+            Auto2[nod1.id].edges.push(edgearray2[countfunctions2-1]);
+            Auto2[nod2.id].edges.push(edgearray2[countfunctions2-1]);
+        }
+    }
+    else{
+        edgearrayF.push(new edge(nod1.id, nod2.id, con));
+        showedges(3);
+        FAuto[nod1.id].edges.push(edgearrayF[countfunctionsF-1]);
+        FAuto[nod2.id].edges.push(edgearrayF[countfunctionsF-1]);
+    }
 }
 
 function merge(){
@@ -434,6 +503,181 @@ function merge(){
         aux = edgearray2[i];
         addedgefinal(FAuto[aux.nodes[0] + 1 + Auto1.length], FAuto[aux.nodes[1] + 1 + Auto1.length], aux.Condition);
     }
+}
+
+function backup(auto){
+    if(auto == 1){
+        copyauto = Auto1;
+        countstatescopy = countstates1;
+        edgearraycopy = edgearray1;
+        countfunctionscopy = countfunctions1;
+        var aux = document.getElementsByClassName("auto1");
+        while(aux[0]){
+            if(aux[0].classList.contains("finalstate")){
+                finalstatescopy.push(aux[0].id/2);
+            }
+            aux[0].parentNode.removeChild(aux[0]);
+        }
+        Auto1.splice(0, Auto1.length)
+        edgearray1.splice(0, edgearray1.length);
+        countstates1 = 0;
+        convertstep1(1, copyauto[0]);
+    }
+    else if(auto == 2){
+        copyauto = Auto2;
+        countstatescopy = countstates2;
+        edgearraycopy = edgearray2;
+        countfunctionscopy = countfunctions2;
+        var aux = document.getElementsByClassName("auto2");
+        while(aux[0]){
+            if(aux[0].classList.contains("finalstate")){
+                finalstatescopy.push((aux[0].id/2) + 1);
+            }
+            aux[0].parentNode.removeChild(aux[0]);
+        }
+        Auto2.splice(0, Auto2.length)
+        edgearray2.splice(0, edgearray2.length);
+        countstates2 = 0;
+    }
+    else if(auto == 3){
+        copyauto = FAuto;
+        countstatescopy = countstatesF;
+        edgearraycopy = edgearrayF;
+        countfunctionscopy = countfunctionsF;
+        var aux = document.getElementsByClassName("finalauto");
+        while(aux[0]){
+            if(aux[0].classList.contains("finalstate")){
+                finalstatescopy.push(aux[0].id *-1);
+            }
+            aux[0].parentNode.removeChild(aux[0]);
+        }
+        FAuto.splice(0, Auto1.length)
+        edgearrayF.splice(0, edgearray1.length);
+        countstatesF = 0;
+    }
+}
+
+function convertstep3(arr, nod, auto){
+    var count, i, j, aux, functions = [], char, nods = [], bool = false;
+    if(auto == 1){
+        count = countstates1;
+    }
+    else if(auto == 2){
+        count = countstates2;
+    }
+    else if(auto == 3){
+        count = countstatesF;
+    }
+    for(i = 0; i < arr.length - 1; i++){
+        aux = copyauto[arr[i]];
+        for(j = 0; j < aux.edges.length; j++){
+            if(aux.edges[j].nodes[0] == arr[i]){
+                functions.push(aux.edges[j]);
+            }
+        }
+    }
+    for(i = 1; i < language.length; i++){
+        char = language[i];
+        for(j = 0; j < functions.length; j++){
+            if(functions[j].Condition == char){
+                nods.push(functions[j].nodes[1])
+            }
+        }
+        for(j = 0; j < count; j++){
+            if(!bool){
+                nods.push(j);
+                bool = pressent(creatednodes, nods);
+                aux = nods.pop();
+            }
+        }
+        if(!bool){
+            aux = count;
+            for(j = 0; j < nods.length; j++){
+                convertstep2(copyauto[nods[i]], nods)
+            }
+            bool = determinefinal(nods, 1);
+            createnode(bool, 1);
+            nods.push(count-1);
+            creatednodes.push(nods);
+            if(auto == 1){
+                convertstep3(arr, Auto1[count], auto);
+            }
+            else if(auto == 2){
+                convertstep3(arr, Auto2[count], auto);
+            }
+            else if(auto == 3){
+                convertstep3(arr, FAuto[count], auto);
+            }
+        }
+        if(nod.length != 0){
+            if(auto == 1){
+                addedgefinal(nod, Auto1[aux], char, 1);
+            }
+            else if(auto == 2){
+                addedgefinal(nod, Auto2[aux], char, 1);
+            }
+            else if(auto == 3){
+                addedgefinal(nod, FAuto[aux], char, 1);
+            }
+        }
+    }
+}
+
+function convertstep2(nod, arr){
+    var i, aux;
+    for(i == 0; i < nod.edges.length; i++){
+        aux = nod.edges[i];
+        if(aux.Condition == "@" && aux.nodes[0] == nod.id && !pressent(arr, aux.nodes[1])){
+            arr.push(aux.nodes[1]);
+            convertstep2(aux.nodes[1], arr);
+        }
+    }
+}
+
+function determinefinal(arr){
+    var i, nod;
+    for(i = 0; i < arr.length; i++){
+        nod = copyauto[arr[i]];
+        if(pressent(finalstatescopy, nod.id)){
+            return true;
+        }
+    }
+    return false;
+}
+
+function convertstep1(auto, nod){
+    var arr = [], bool, i, count;
+    if(auto == 1){
+        count = countstates1 - 1;
+    }
+    else if(auto == 2){
+        count = countstates2 - 1;
+    }
+    else if(auto == 3){
+        count = countstatesF - 1;
+    }
+    arr.push(nod.id);
+    for(i = 0; i < arr.length; i++){
+        convertstep2(copyauto[arr[i]], arr);
+    }
+    bool = determinefinal(arr);
+    createnode(bool, auto);
+    arr.push(count);
+    creatednodes.push(arr);
+    if(auto == 1){
+        convertstep3(arr, Auto1[count], auto);
+    }
+    else if(auto == 2){
+        convertstep3(arr, Auto2[count], auto);
+    }
+    else if(auto == 3){
+        convertstep3(arr, FAuto[count], auto);
+    }
+}
+
+function convert(auto){
+    backup(auto);
+    convertstep1(auto, copyauto[0]);
 }
 
 function help(){
