@@ -261,45 +261,83 @@ function check(array, auto){
         document.addEventListener('mousemove', moveAlong);
     }
     
-    function addedge(aux){
+    function addedge(auto){
         var nodes = document.getElementsByClassName("selected");
         var node1 = document.getElementById(first.id);
         var node2 = document.getElementById(nodes[0].id);
         if(node1 == node2)
             node2 = document.getElementById(nodes[1].id)
+        var aux, bool, i;
         document.getElementsByClassName("selected")[0].classList.remove("selected");
         document.getElementsByClassName("selected")[0].classList.remove("selected");
-        if(aux == 1){
-            edgearray1.push(new edge(node1.id/2, node2.id/2, Condition));
+        if(auto == 1){
+            aux = new edge(node1.id/2, node2.id/2, Condition);
+            for(i = 0; i < edgearray1.length; i++){
+                if(edgearray1[i].nodes[0] == aux.nodes[0] && edgearray1[i].nodes[1] == aux.nodes[1]){
+                    edgearray1[i].Condition = aux.Condition;
+                    bool = true;
+                }
+            }
+            if(!bool){
+                edgearray1.push(aux);
+            }
         }
-        if(aux == 2){
-            edgearray2.push(new edge((node1.id-1)/2, (node2.id-1)/2, Condition));
+        if(auto == 2){
+            aux = new edge((node1.id-1)/2, (node2.id-1)/2, Condition);
+            for(i = 0; i < edgearray2.length; i++){
+                if(edgearray2[i].nodes[0] == aux.nodes[0] && edgearray2[i].nodes[1] == aux.nodes[1]){
+                    edgearray2[i].Condition = aux.Condition;
+                    bool = true;
+                }
+            }
+            if(!bool){
+                edgearray2.push(aux);
+            }
         }
-        if(aux == 1){
+        if(auto == 1){
             Auto1[node1.id/2].edges.push(edgearray1[countfunctions1-1]);
             Auto1[node2.id/2].edges.push(edgearray1[countfunctions1-1]);
         }
-        if(aux == 2){
+        if(auto == 2){
             Auto2[(node1.id-1)/2].edges.push(edgearray2[countfunctions2-1]);
             Auto2[(node2.id-1)/2].edges.push(edgearray2[countfunctions2-1]);
         }
-        showedges(aux);
+        showedges(auto);
         pathmatrix();
     }
 
-    function addedgeself(aux){
+    function addedgeself(auto){
         var nodes = document.getElementsByClassName("selected2")[0];
-        if(aux == 1){
-            edgearray1.push(new edge(nodes.id/2, nodes.id/2, Condition));
+        var aux, bool;
+        if(auto == 1){
+            aux = new edge(nodes.id/2, nodes.id/2, Condition);
+            for(i = 0; i < edgearray1.length; i++){
+                if(edgearray1[i].nodes[0] == aux.nodes[0] && edgearray1[i].nodes[1] == aux.nodes[1]){
+                    edgearray1[i].Condition = aux.Condition;
+                    bool = true;
+                }
+            }
+            if(!bool){
+                edgearray1.push(aux);
+            }
         }
-        if(aux == 2){
-            edgearray2.push(new edge((nodes.id-1)/2, (nodes.id-1)/2, Condition));
+        if(auto == 2){
+            aux = new edge((nodes.id-1)/2, (nodes.id-1)/2, Condition);
+            for(i = 0; i < edgearray2.length; i++){
+                if(edgearray2[i].nodes[0] == aux.nodes[0] && edgearray2[i].nodes[1] == aux.nodes[1]){
+                    edgearray2[i].Condition = aux.Condition;
+                    bool = true;
+                }
+            }
+            if(!bool){
+                edgearray2.push(aux);
+            }
         }
-        showedges(aux);
-        if(aux == 1){
+        showedges(auto);
+        if(auto == 1){
             Auto1[nodes.id/2].edges.push(edgearray1[countfunctions1-1]);
         }
-        if(aux == 2){
+        if(auto == 2){
             Auto2[(nodes.id-1)/2].edges.push(edgearray2[countfunctions2-1]);
         }
         nodes.classList.remove("selected2");
@@ -506,6 +544,7 @@ function merge(){
 }
 
 function backup(auto){
+    copyauto.splice(0, copyauto.length);
     if(auto == 1){
         copyauto = Auto1;
         countstatescopy = countstates1;
@@ -518,8 +557,8 @@ function backup(auto){
             }
             aux[0].parentNode.removeChild(aux[0]);
         }
-        Auto1.splice(0, Auto1.length)
-        edgearray1.splice(0, edgearray1.length);
+        Auto1 = [];
+        edgearray1 = [];
         countstates1 = 0;
         convertstep1(1, copyauto[0]);
     }
@@ -535,8 +574,8 @@ function backup(auto){
             }
             aux[0].parentNode.removeChild(aux[0]);
         }
-        Auto2.splice(0, Auto2.length)
-        edgearray2.splice(0, edgearray2.length);
+        Auto2 = [];
+        edgearray2 = [];
         countstates2 = 0;
     }
     else if(auto == 3){
@@ -551,8 +590,8 @@ function backup(auto){
             }
             aux[0].parentNode.removeChild(aux[0]);
         }
-        FAuto.splice(0, Auto1.length)
-        edgearrayF.splice(0, edgearray1.length);
+        FAuto = [];
+        edgearrayF = [];
         countstatesF = 0;
     }
 }
@@ -569,10 +608,9 @@ function convertstep3(arr, nod, auto){
         count = countstatesF;
     }
     for(i = 0; i < arr.length - 1; i++){
-        aux = copyauto[arr[i]];
-        for(j = 0; j < aux.edges.length; j++){
-            if(aux.edges[j].nodes[0] == arr[i]){
-                functions.push(aux.edges[j]);
+        for(j = 0; j < edgearraycopy.length; j++){
+            if(edgearraycopy[j].nodes[0] == arr[i]){
+                functions.push(edgearraycopy[j]);
             }
         }
     }
@@ -580,44 +618,44 @@ function convertstep3(arr, nod, auto){
         char = language[i];
         for(j = 0; j < functions.length; j++){
             if(functions[j].Condition == char){
-                nods.push(functions[j].nodes[1])
+                nods.push(functions[j].nodes[1]);
             }
         }
-        for(j = 0; j < count; j++){
+        if(nods.length != 0){
+            for(j = 0; j < count; j++){
+                if(!bool){
+                    nods.push(j);
+                    bool = pressent(creatednodes, nods);
+                    aux = nods.pop();
+                }
+            }
             if(!bool){
-                nods.push(j);
-                bool = pressent(creatednodes, nods);
-                aux = nods.pop();
+                for(j = 0; j < nods.length; j++){
+                    convertstep2(copyauto[nods[j]], nods);
+                }
+                bool = determinefinal(nods);
+                createnode(bool, auto);
+                nods.push(count);
+                creatednodes.push(nods);
+                if(auto == 1){
+                    convertstep3(nods, Auto1[count], auto);
+                }
+                else if(auto == 2){
+                    convertstep3(nods, Auto2[count], auto);
+                }
+                else if(auto == 3){
+                    convertstep3(nods, FAuto[count], auto);
+                }
+                aux = count;
             }
-        }
-        if(!bool){
-            aux = count;
-            for(j = 0; j < nods.length; j++){
-                convertstep2(copyauto[nods[i]], nods)
-            }
-            bool = determinefinal(nods, 1);
-            createnode(bool, 1);
-            nods.push(count-1);
-            creatednodes.push(nods);
-            if(auto == 1){
-                convertstep3(arr, Auto1[count], auto);
-            }
-            else if(auto == 2){
-                convertstep3(arr, Auto2[count], auto);
-            }
-            else if(auto == 3){
-                convertstep3(arr, FAuto[count], auto);
-            }
-        }
-        if(nod.length != 0){
             if(auto == 1){
                 addedgefinal(nod, Auto1[aux], char, 1);
             }
             else if(auto == 2){
-                addedgefinal(nod, Auto2[aux], char, 1);
+                addedgefinal(nod, Auto2[aux], char, 2);
             }
             else if(auto == 3){
-                addedgefinal(nod, FAuto[aux], char, 1);
+                addedgefinal(nod, FAuto[aux], char);
             }
         }
     }
@@ -625,8 +663,8 @@ function convertstep3(arr, nod, auto){
 
 function convertstep2(nod, arr){
     var i, aux;
-    for(i == 0; i < nod.edges.length; i++){
-        aux = nod.edges[i];
+    for(i == 0; i < edgearraycopy.length; i++){
+        aux = edgearraycopy[i];
         if(aux.Condition == "@" && aux.nodes[0] == nod.id && !pressent(arr, aux.nodes[1])){
             arr.push(aux.nodes[1]);
             convertstep2(aux.nodes[1], arr);
@@ -692,10 +730,10 @@ function conca()
         aux = edgearray1[i];
         addedgefinal(FAuto[aux.nodes[0] + 1], FAuto[aux.nodes[1] + 1], aux.Condition);
     }
-    for(i = 1 + Auto1.length; i < Auto1.length + 1 + Auto2.length; i++){
-        bool = document.getElementById(2*(i-1-Auto1.length)+1).classList.contains("finalstate");
+    for(i = 1; i < Auto2.length + 1; i++){
+        bool = document.getElementById((i-1)*2).classList.contains("finalstate");
         createnode(bool);
-        if (i == 1 + Auto1.length)
+        if (i == 1)
     {
         addedgefinal(FAuto[Auto1.length-1], FAuto[Auto1.length], "@")
     }
