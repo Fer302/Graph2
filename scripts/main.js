@@ -692,10 +692,10 @@ function conca()
         aux = edgearray1[i];
         addedgefinal(FAuto[aux.nodes[0] + 1], FAuto[aux.nodes[1] + 1], aux.Condition);
     }
-    for(i = 1; i < Auto2.length + 1; i++){
-        bool = document.getElementById((i-1)*2).classList.contains("finalstate");
+    for(i = 1 + Auto1.length; i < Auto1.length + 1 + Auto2.length; i++){
+        bool = document.getElementById(2*(i-1-Auto1.length)+1).classList.contains("finalstate");
         createnode(bool);
-        if (i == 1)
+        if (i == 1 + Auto1.length)
     {
         addedgefinal(FAuto[Auto1.length-1], FAuto[Auto1.length], "@")
     }
