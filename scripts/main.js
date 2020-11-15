@@ -680,6 +680,32 @@ function convert(auto){
     convertstep1(auto, copyauto[0]);
 }
 
+function conca()
+{
+    var i, bool, aux, num;
+    emptyauto(3);
+    for(i = 1; i < Auto1.length + 1; i++){
+        bool = document.getElementById((i-1)*2).classList.contains("inicialstate");
+        createnode(bool);
+    }
+    for(i = 0; i < edgearray1.length; i++){
+        aux = edgearray1[i];
+        addedgefinal(FAuto[aux.nodes[0] + 1], FAuto[aux.nodes[1] + 1], aux.Condition);
+    }
+    for(i = 1; i < Auto2.length + 1; i++){
+        bool = document.getElementById((i-1)*2).classList.contains("finalstate");
+        createnode(bool);
+        if (i == 1)
+    {
+        addedgefinal(FAuto[Auto1.length-1], FAuto[Auto1.length], "@")
+    }
+    }
+    for(i = 0; i < edgearray2.length; i++){
+        aux = edgearray2[i];
+        addedgefinal(FAuto[aux.nodes[0] + 1 + Auto1.length], FAuto[aux.nodes[1] + 1 + Auto1.length], aux.Condition);
+    }
+}
+
 function help(){
     alert("PARA AGREGAR ESTADOS:");
     alert("Clickear en el boton 'Nuevo estado'");
